@@ -16,7 +16,13 @@ pipeline {
                 }
             }
         }
-        stage('Deliver') {
+        stage('Deploy') {
+withCredentials([[$class: 'FileBinding', credentialsId: 'bitbucket-key-file', variable: 'SSHKEY']]) {
+    bat '''
+        E:\\Jenkins\\tools\\Git_2.10.1\\usr\\bin\\scp.exe -i "${SSHKEY}" dsub.tar.gz tprmbbuild@192.168.220.57:dsubdeploy
+        E:\\Jenkins\\tools\\Git_2.10.1\\usr\\bin\\scp.exe -i "${SSHKEY}" deployDsubUi.sh tprmbbuild@192.168.220.57:dsubdeploy
+        E:\\Jenkins\\tools\\Git_2.10.1\\usr\\bin\\scp.exe -i "${SSHKEY}" -o StrictHostKeyChecking=no 192.168.220.57 < server_script.sh
+
             steps {
                 bat './jenkins/scripts/deliver.sh'
             }
